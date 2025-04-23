@@ -36,9 +36,11 @@ public class VendaController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Venda adicionada com sucesso"),
                     @ApiResponse(responseCode = "400", description = "Erro na requisição"),
+                    @ApiResponse(responseCode = "401", description = "Usuário não autenticado"),
                     @ApiResponse(responseCode = "404", description = "Venda não encontrada")
 
             })
+    @Secured("VENDEDOR")
     public void executeSale(@RequestBody @Parameter(name = "dto", description = "DTO para requisição de vendas") VendaRequestDTO dtos) {
         vendasService.executeSalesWithDiscoutOrNot(dtos);
 

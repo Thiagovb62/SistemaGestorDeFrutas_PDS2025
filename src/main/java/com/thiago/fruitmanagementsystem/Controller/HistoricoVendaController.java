@@ -36,11 +36,13 @@ public class HistoricoVendaController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
                     @ApiResponse(responseCode = "400", description = "Erro na requisição"),
+                    @ApiResponse(responseCode = "401", description = "Usuário não autenticado"),
                     @ApiResponse(responseCode = "404", description = "Histórico de vendas não encontrado")
 
             })
-    public List<HistoricoResponseDTO> findAllHistoricos() {
-        return historicoVendaService.findAllHistoricos();
+    @Secured({"VENDEDOR", "ADMIN"})
+    public ResponseEntity<List<HistoricoResponseDTO>> findAllHistoricos() {
+        return  ResponseEntity.ok(historicoVendaService.findAllHistoricos());
     }
 
     @GetMapping(value = "/all/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
@@ -52,6 +54,7 @@ public class HistoricoVendaController {
                     @ApiResponse(responseCode = "400", description = "Erro na requisição"),
                     @ApiResponse(responseCode = "404", description = "Histórico de vendas não encontrado")
             })
+    @Secured({"VENDEDOR", "ADMIN"})
     public ResponseEntity<byte[]> findAllHistoricosPdf() throws DocumentException, IOException {
         List<HistoricoResponseDTO> historicos = historicoVendaService.findAllHistoricos();
         if (historicos.isEmpty()) {

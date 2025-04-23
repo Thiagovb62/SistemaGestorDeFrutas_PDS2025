@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -33,10 +34,13 @@ public class FrutasController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
                     @ApiResponse(responseCode = "400", description = "Erro na requisição"),
+                    @ApiResponse(responseCode = "401", description = "Sem autorização"),
+                    @ApiResponse (responseCode = "403", description = "Acesso negado"),
                     @ApiResponse(responseCode = "404", description = "Fruta não encontrada")
 
             })
     @Parameter(name = "dto", description = "DTO para busca de frutas pelo nome")
+    @Secured("VENDEDOR")
     public ResponseEntity findFruitByName(@RequestBody  FrutasFindBysDTO dto) {
         var frutas = frutaService.findFruitByName(dto);
         return ResponseEntity.ok(frutas);
@@ -49,9 +53,12 @@ public class FrutasController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
                     @ApiResponse(responseCode = "400", description = "Erro na requisição"),
+                    @ApiResponse(responseCode = "401", description = "Usuário não autenticado"),
+                    @ApiResponse(responseCode = "403", description = "Acesso negado"),
                     @ApiResponse(responseCode = "404", description = "Fruta não encontrada")
 
             })
+    @Secured("VENDEDOR")
     public ResponseEntity getAllFruits() {
         return ResponseEntity.ok(frutaService.getAllFruits());
     }
@@ -63,9 +70,12 @@ public class FrutasController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
                     @ApiResponse(responseCode = "400", description = "Erro na requisição"),
+                    @ApiResponse(responseCode = "401", description = "Sem autorização"),
+                    @ApiResponse (responseCode = "403", description = "Acesso negado"),
                     @ApiResponse(responseCode = "404", description = "Fruta não encontrada")
 
             })
+    @Secured("VENDEDOR")
     public ResponseEntity getFruitsByClassification(@RequestBody  @Parameter(name = "dto", description = "DTO para busca de frutas pela classificação") FrutasFindBysDTO dto){
         return ResponseEntity.ok(frutaService.getFruitsByClassification(dto));
     }
@@ -78,9 +88,12 @@ public class FrutasController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
                     @ApiResponse(responseCode = "400", description = "Erro na requisição"),
+                    @ApiResponse(responseCode = "401", description = "Sem autorização"),
+                    @ApiResponse (responseCode = "403", description = "Acesso negado"),
                     @ApiResponse(responseCode = "404", description = "Fruta não encontrada")
 
             })
+    @Secured("VENDEDOR")
     public ResponseEntity getFruitsByFreshness(@RequestBody FrutasFindBysDTO dto){
         return ResponseEntity.ok(frutaService.getFruitsByFreshness(dto));
     }
@@ -97,6 +110,7 @@ public class FrutasController {
                     @ApiResponse(responseCode = "404", description = "Fruta não encontrada")
 
             })
+    @Secured("VENDEDOR")
     public ResponseEntity getFruitsByAvailableQuantity(){
         return ResponseEntity.ok(frutaService.getFruitsByAvailableQuantity());
     }
@@ -113,6 +127,7 @@ public class FrutasController {
                     @ApiResponse(responseCode = "404", description = "Fruta não encontrada")
 
             })
+    @Secured("VENDEDOR")
     public ResponseEntity getFruitsBySaleValueAsc(){
         return ResponseEntity.ok(frutaService.getFruitsBySaleValueAsc());
     }
@@ -124,9 +139,11 @@ public class FrutasController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
                     @ApiResponse(responseCode = "400", description = "Erro na requisição"),
+                    @ApiResponse(responseCode = "401", description = "Sem autorização"),
                     @ApiResponse(responseCode = "404", description = "Fruta não encontrada")
 
             })
+    @Secured("VENDEDOR")
     public ResponseEntity getFruitsBySaleValueDesc(){
         return ResponseEntity.ok(frutaService.getFruitsBySaleValueDesc());
     }
@@ -138,9 +155,11 @@ public class FrutasController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
                     @ApiResponse(responseCode = "400", description = "Erro na requisição"),
+                    @ApiResponse(responseCode = "401", description = "Sem autorização"),
                     @ApiResponse(responseCode = "404", description = "Fruta não encontrada")
 
             })
+    @Secured("VENDEDOR")
     public ResponseEntity getFruitsByParams(@RequestBody FrutasFindBysDTO dto){
         return ResponseEntity.ok(frutaService.findAllByClassificacaoOrFrescaAndOrderByValorVendaIdAsc(dto));
     }
@@ -153,11 +172,12 @@ public class FrutasController {
                     @ApiResponse(responseCode = "200", description = "Fruta salva com sucesso"),
                     @ApiResponse(responseCode = "400", description = "Erro na requisição"),
                     @ApiResponse(responseCode = "401", description = "Sem autorização"),
+                    @ApiResponse(responseCode = "401", description = "Sem autorização"),
                     @ApiResponse (responseCode = "403", description = "Acesso negado"),
                     @ApiResponse(responseCode = "404", description = "Fruta não encontrada")
 
             })
-
+    @Secured("ADMIN")
     public ResponseEntity saveFruit(@Valid @RequestBody  @Parameter(name = "dto", description = "DTO para criação de frutas")  FrutaRequestDTO dto){
         frutaService.saveFruit(dto);
         return ResponseEntity.ok().build();
@@ -171,9 +191,12 @@ public class FrutasController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Fruta atualizada com sucesso"),
                     @ApiResponse(responseCode = "400", description = "Erro na requisição"),
+                    @ApiResponse(responseCode = "401", description = "Sem autorização"),
+                    @ApiResponse (responseCode = "403", description = "Acesso negado"),
                     @ApiResponse(responseCode = "404", description = "Fruta não encontrada")
 
             })
+    @Secured("ADMIN")
     public ResponseEntity< Fruta > updateFruta(@PathVariable Long id, @RequestBody FrutaRequestDTO dto) {
         return frutaService.updateFruta (id, dto);
     }
@@ -185,9 +208,11 @@ public class FrutasController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "Fruta deletada com sucesso"),
                     @ApiResponse(responseCode = "400", description = "Erro na requisição"),
+                    @ApiResponse(responseCode = "401", description = "Sem autorização"),
                     @ApiResponse(responseCode = "404", description = "Fruta não encontrada")
 
             })
+    @Secured("ADMIN")
     public ResponseEntity deleteFruta(@PathVariable Long id) {
         frutaService.deleteFruta(id);
         return ResponseEntity.noContent ().build ();
