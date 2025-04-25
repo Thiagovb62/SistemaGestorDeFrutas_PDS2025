@@ -7,6 +7,7 @@ import com.thiago.fruitmanagementsystem.Service.FrutaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -213,6 +214,7 @@ public class FrutasController {
 
             })
     @Secured("ADMIN")
+    @Transactional
     public ResponseEntity deleteFruta(@PathVariable Long id) {
         frutaService.deleteFruta(id);
         return ResponseEntity.noContent ().build ();

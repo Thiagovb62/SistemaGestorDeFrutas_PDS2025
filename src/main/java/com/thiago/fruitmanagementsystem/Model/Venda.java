@@ -3,7 +3,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "historico_venda_fruta")
-public class HistoricoVendaFrutas {
+public class Venda {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,7 +14,7 @@ public class HistoricoVendaFrutas {
     private HistoricoVendas historicoVendas;
 
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "fruta_id")
     private Fruta fruta;
 

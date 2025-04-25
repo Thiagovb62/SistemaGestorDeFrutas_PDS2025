@@ -20,10 +20,10 @@ public class HistoricoVendaService {
     }
 
     public List<HistoricoResponseDTO> findAllHistoricos() {
-        List<HistoricoVendaFrutas> historicoVendas = historicoVendaRepository.findAllHstoricos();
+        List<Venda> historicoVendas = historicoVendaRepository.findAllHstoricos();
         Map<UUID, HistoricoResponseDTO> historicoMap = new HashMap<>();
 
-        for (HistoricoVendaFrutas historicoVenda : historicoVendas) {
+        for (Venda historicoVenda : historicoVendas) {
             UUID historicoId = historicoVenda.getHistoricoVendas().getId();
             if (!historicoMap.containsKey(historicoId)) {
                 historicoMap.put(historicoId, new HistoricoResponseDTO(
@@ -54,15 +54,15 @@ public class HistoricoVendaService {
         return historico;
     }
 
-    protected List<HistoricoVendaFrutas> processFruitsSales(VendaRequestDTO dto, HistoricoVendas historico) {
-        List<HistoricoVendaFrutas> historicoVendaFruta = new ArrayList<>();
+    protected List<Venda> processFruitsSales(VendaRequestDTO dto, HistoricoVendas historico) {
+        List<Venda> historicoVendaFruta = new ArrayList<>();
 
 
-        Double totalVenda = 0.0;
+        double totalVenda = 0.0;
 
         for (FrutasVendasDTO dto2 : dto.frutasVendasDTO()) {
             Fruta fruta = frutaRepository.findById(Long.valueOf(dto2.frutaID())).orElseThrow(() -> new RuntimeException("Fruta não encontrada"));
-            Double valorVenda = fruta.getValorVenda() * dto2.qtdEscolhida();
+            double valorVenda = fruta.getValorVenda() * dto2.qtdEscolhida();
 
             if (dto2.discount() != 0) {
                 valorVenda -= (valorVenda * dto2.discount());
@@ -72,14 +72,16 @@ public class HistoricoVendaService {
                 throw new RuntimeException("Quantidade de fruta Escolhida Maior Do que Quantidade Disponivel");
             }
 
+           valorVenda = Math.round(valorVenda * 100.0) / 100.0;
+
             fruta.setQtdDisponivel(fruta.getQtdDisponivel() - dto2.qtdEscolhida());
             frutaRepository.save(fruta);
 
 
-        HistoricoVendaFrutas historicoVendaFrutas = new HistoricoVendaFrutas();
-        historicoVendaFrutas.setHistoricoVendas(historico);
-        historicoVendaFrutas.setFruta(fruta);
-        historicoVendaFruta.add(historicoVendaFrutas);
+        Venda venda = new Venda();
+        venda.setHistoricoVendas(historico);
+        venda.setFruta(fruta);
+        historicoVendaFruta.add(venda);
 
 
             totalVenda += valorVenda;

@@ -1,6 +1,6 @@
 package com.thiago.fruitmanagementsystem.Service;
 
-import com.thiago.fruitmanagementsystem.Model.HistoricoVendaFrutas;
+import com.thiago.fruitmanagementsystem.Model.Venda;
 import com.thiago.fruitmanagementsystem.Model.VendaRequestDTO;
 import com.thiago.fruitmanagementsystem.Model.HistoricoVendas;
 import com.thiago.fruitmanagementsystem.Repository.HistoricoVendaRepository;
@@ -24,7 +24,7 @@ public class VendasService  {
 
             HistoricoVendas historico = historicoVendaService.createHistoricoVendas(dto);
 
-            List<HistoricoVendaFrutas> frutasVendidas = historicoVendaService.processFruitsSales(dto, historico);
+            List<Venda> frutasVendidas = historicoVendaService.processFruitsSales(dto, historico);
 
             historico.setFrutasVendidas(frutasVendidas);
 

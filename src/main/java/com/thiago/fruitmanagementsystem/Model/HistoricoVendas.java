@@ -21,10 +21,10 @@ public class HistoricoVendas {
 
     private int qtdEscolhida;
 
-    @OneToMany(mappedBy = "historicoVendas", cascade = CascadeType.ALL)
-    private List<HistoricoVendaFrutas> frutasVendidas;
+    @OneToMany(mappedBy = "historicoVendas", cascade = CascadeType.PERSIST)
+    private List<Venda> frutasVendidas;
 
-    public HistoricoVendas(UUID id, LocalDateTime dataVenda, Double valorTotal, List<HistoricoVendaFrutas> frutasVendidas,int qtdEscolhida) {
+    public HistoricoVendas(UUID id, LocalDateTime dataVenda, Double valorTotal, List<Venda> frutasVendidas, int qtdEscolhida) {
         this.id = id;
         this.dataVenda = dataVenda;
         this.valorTotal = valorTotal;
@@ -67,11 +67,11 @@ public class HistoricoVendas {
         this.valorTotal = valorTotal;
     }
 
-    public List<HistoricoVendaFrutas> getFrutasVendidas() {
+    public List<Venda> getFrutasVendidas() {
         return frutasVendidas;
     }
 
-    public void setFrutasVendidas(List<HistoricoVendaFrutas> frutasVendidas) {
+    public void setFrutasVendidas(List<Venda> frutasVendidas) {
         this.frutasVendidas = frutasVendidas;
     }
 }
