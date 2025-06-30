@@ -2,6 +2,7 @@ package com.thiago.fruitmanagementsystem.Controller;
 
 import com.itextpdf.text.DocumentException;
 import com.thiago.fruitmanagementsystem.Model.HistoricoResponseDTO;
+import com.thiago.fruitmanagementsystem.PdfUtils.ExportContext;
 import com.thiago.fruitmanagementsystem.Repository.HistoricoVendaRepository;
 import com.thiago.fruitmanagementsystem.Service.HistoricoVendaService;
 import com.thiago.fruitmanagementsystem.Utils.PdfUtils;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +30,12 @@ public class HistoricoVendaController {
 
     private final HistoricoVendaService historicoVendaService;
     private final HistoricoVendaRepository historicoVendaRepository;
+    private final ExportContext exportContext;
 
-    public HistoricoVendaController(HistoricoVendaService historicoVendaService, HistoricoVendaRepository historicoVendaRepository) {
+    public HistoricoVendaController(HistoricoVendaService historicoVendaService, HistoricoVendaRepository historicoVendaRepository, ExportContext exportContext) {
         this.historicoVendaService = historicoVendaService;
         this.historicoVendaRepository = historicoVendaRepository;
+        this.exportContext = exportContext;
     }
 
     @GetMapping(value = "/all",produces = "application/json")
@@ -50,7 +54,7 @@ public class HistoricoVendaController {
         return  ResponseEntity.ok(historicoVendaService.findAllHistoricos());
     }
 
-    @GetMapping(value = "/all/pdf", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/export/{format}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Gera um PDF com todos os históricos de vendas", description = "Gera um PDF com todos os históricos de vendas",
             tags = {"HistoricoVenda"},
             operationId = "allPdf",
@@ -60,26 +64,20 @@ public class HistoricoVendaController {
                     @ApiResponse(responseCode = "404", description = "Histórico de vendas não encontrado")
             })
     @Secured({"VENDEDOR", "ADMIN"})
-    public ResponseEntity<byte[]> findAllHistoricosPdf() throws DocumentException, IOException {
-        List<HistoricoResponseDTO> historicos = historicoVendaService.findAllHistoricos();
-        if (historicos.isEmpty()) {
-            System.out.println("No historical sales data found.");
-        } else {
-            System.out.println("Historical sales data found: " + historicos.size() + " records.");
-        }
-        byte[] pdfStream = PdfUtils.generatePdfStream(historicos);
-        if (pdfStream.length == 0) {
-            System.out.println("PDF generation failed or resulted in an empty PDF.");
-        } else {
-            System.out.println("PDF generated successfully with size: " + pdfStream.length + " bytes.");
-        }
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=historico_vendas.pdf");
-        PdfUtils.savePdfToFile(pdfStream, "historico_vendas.pdf");
+    public ResponseEntity<byte[]> export(
+            @PathVariable String format) throws Exception {
+        List<HistoricoResponseDTO> dados = historicoVendaService.findAllHistoricos();
+        byte[] output = exportContext.execute(format, dados);
+        MediaType mediaType =
+                format.equals("pdf") ? MediaType.APPLICATION_PDF :
+                        format.equals("csv") ? MediaType.valueOf("text/csv") :
+                                MediaType.APPLICATION_JSON;
+
         return ResponseEntity.ok()
-                .headers(headers)
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(pdfStream.clone());
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=historico." + format)
+                .contentType(mediaType)
+                .body(output);
     }
 
     @DeleteMapping (value = "/delete/{id}")

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class HistoricoVendaService {
@@ -20,26 +21,20 @@ public class HistoricoVendaService {
     }
 
     public List<HistoricoResponseDTO> findAllHistoricos() {
-        List<Venda> historicoVendas = historicoVendaRepository.findAllHstoricos();
-        Map<UUID, HistoricoResponseDTO> historicoMap = new HashMap<>();
 
-        for (Venda historicoVenda : historicoVendas) {
-            UUID historicoId = historicoVenda.getHistoricoVendas().getId();
-            if (!historicoMap.containsKey(historicoId)) {
-                historicoMap.put(historicoId, new HistoricoResponseDTO(
-                        historicoId,
-                        historicoVenda.getHistoricoVendas().getValorTotal(),
-                        new ArrayList<>()
-                ));
-            }
-            HistoricoResponseDTO historicoResponseDTO = historicoMap.get(historicoId);
-            historicoResponseDTO.frutasVendidas().add(new FrutaVendaResponseDTO(
-                    historicoVenda.getHistoricoVendas().getQtdEscolhida(),
-                    historicoVenda.getHistoricoVendas().getDataVenda(),
-                    historicoVenda.getFruta()
-            ));
-        }
-        return new ArrayList<>(historicoMap.values());
+            return historicoVendaRepository.findAll().stream()
+                    .map(entity -> HistoricoResponseDTOBuilder.builder()
+                            .id(entity.getId())
+                            .valorTotal(entity.getValorTotal())
+                            .frutasVendidas(entity.getFrutasVendidas().stream()
+                                    .map(fr -> new FrutaVendaResponseDTO(
+                                            entity.getQtdEscolhida(),
+                                            entity.getDataVenda(),
+                                            fr.getFruta()))
+                                    .collect(Collectors.toList()))
+                            .build()
+                    )
+                    .collect(Collectors.toList());
     }
 
 

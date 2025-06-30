@@ -8,4 +8,8 @@ public record FrutaVendaResponseDTO(
         LocalDateTime dataVenda,
         Fruta frutaVendida
 ) {
+    public FrutaVendaResponseDTO(LocalDateTime dataVenda, int qtdDisponivel, Fruta frutaVendida) {
+        this(qtdDisponivel, dataVenda, frutaVendida);
+
+    }
 }
