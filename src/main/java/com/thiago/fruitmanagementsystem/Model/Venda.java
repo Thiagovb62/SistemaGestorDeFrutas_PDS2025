@@ -13,6 +13,10 @@ public class Venda {
     @JoinColumn(name = "historico_venda_id")
     private HistoricoVendas historicoVendas;
 
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "barraca_id")
+    private Barraca barraca;
+
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "fruta_id")
@@ -40,5 +44,12 @@ public class Venda {
 
     public void setFruta(Fruta fruta) {
         this.fruta = fruta;
+    }
+
+    public Barraca getBarraca() {
+        return barraca;
+    }
+    public void setBarraca(Barraca barraca) {
+        this.barraca = barraca;
     }
 }

@@ -2,6 +2,8 @@ package com.thiago.fruitmanagementsystem.Model;
 
 import com.thiago.fruitmanagementsystem.Enums.RoleEnum;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,6 +21,10 @@ public class User implements UserDetails {
     private String email;
     private String password;
 
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    private Barraca barraca;
+
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
 
@@ -35,9 +41,18 @@ public class User implements UserDetails {
         this.password = userDTO.password();
     }
 
+    public Barraca getBarraca() {
+        return barraca;
+    }
+
+    public void setBarraca(Barraca barraca) {
+        this.barraca = barraca;
+    }
+
     public void setRole(RoleEnum role) {
         this.role = role;
     }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

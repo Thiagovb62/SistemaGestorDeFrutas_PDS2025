@@ -30,6 +30,7 @@ public class SecurityConfig {
                                     .requestMatchers("/frutas/**").authenticated()
                                     .requestMatchers("/venda/**").authenticated()
                                     .requestMatchers("/user/**").permitAll ()
+                                    .requestMatchers("/barracas/**").authenticated()
                                     .requestMatchers(
                                                     "/v1/api/**",
                                                     "/v2/api-docs",

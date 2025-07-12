@@ -2,6 +2,8 @@ package com.thiago.fruitmanagementsystem.Model;
 
 import com.thiago.fruitmanagementsystem.Enums.ClassificacaoEnum;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "frutas")
@@ -13,14 +15,21 @@ public class Fruta {
 
     private String nome;
 
+
     @Enumerated(EnumType.STRING)
     private ClassificacaoEnum classificacao;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "barraca_id")
+    private Barraca barraca;
 
     private Boolean fresca;
 
     private int qtdDisponivel;
 
     private double valorVenda;
+
+    private Boolean isOnSale = true;
 
 
     public Fruta() {
@@ -34,13 +43,6 @@ public class Fruta {
         this.valorVenda = valorVenda;
     }
 
-    public Fruta(FrutaRequestDTO frutaRequestDTO) {
-        this.nome = frutaRequestDTO.nome();
-        this.classificacao = ClassificacaoEnum.fromValor(frutaRequestDTO.classificacao());
-        this.fresca = frutaRequestDTO.fresca();
-        this.qtdDisponivel = frutaRequestDTO.qtdDisponivel();
-        this.valorVenda = frutaRequestDTO.valorVenda();
-    }
 
     public Long getId() {
         return id;
@@ -62,12 +64,20 @@ public class Fruta {
         return classificacao;
     }
 
+    public Boolean getFresca() {
+        return fresca;
+    }
+
     public void setClassificacao(ClassificacaoEnum classificacao) {
         this.classificacao = classificacao;
     }
 
-    public Boolean getFresca() {
-        return fresca;
+    public Barraca getBarraca() {
+        return barraca;
+    }
+
+    public void setBarraca(Barraca barraca) {
+        this.barraca = barraca;
     }
 
     public void setFresca(Boolean fresca) {
@@ -101,5 +111,13 @@ public class Fruta {
                 ", qtdDisponivel=" + qtdDisponivel +
                 ", valorVenda=" + valorVenda +
                 '}';
+    }
+
+    public Boolean getOnSale() {
+        return isOnSale;
+    }
+
+    public void setOnSale(Boolean onSale) {
+        isOnSale = onSale;
     }
 }

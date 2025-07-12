@@ -2,6 +2,7 @@ package com.thiago.fruitmanagementsystem.Service;
 
 import com.thiago.fruitmanagementsystem.Enums.ClassificacaoEnum;
 import com.thiago.fruitmanagementsystem.Model.Fruta;
+import com.thiago.fruitmanagementsystem.Model.FrutaBuilder;
 import com.thiago.fruitmanagementsystem.Model.FrutasFindBysDTO;
 import com.thiago.fruitmanagementsystem.Model.FrutaRequestDTO;
 import com.thiago.fruitmanagementsystem.Repository.FrutaRepository;
@@ -73,12 +74,18 @@ public class FrutaService {
 
     public void saveFruit(FrutaRequestDTO dto){
 
-        Fruta fruta = new Fruta(dto);
-        Optional<Fruta> frutaExists = frutaRepository.findByNomeAndClassificacao(fruta.getNome(), fruta.getClassificacao());
+        Fruta builder = FrutaBuilder.builder()
+                .setNome(dto.nome())
+                .setClassificacao(dto.classificacao())
+                .setFresca(dto.fresca())
+                .setQtdDisponivel(dto.qtdDisponivel())
+                .setValorVenda(dto.valorVenda())
+                .build();
+        Optional<Fruta> frutaExists = frutaRepository.findByNomeAndClassificacao(dto.nome(), ClassificacaoEnum.fromValor(dto.classificacao()));
         if (frutaExists.isPresent()){
             throw new IllegalArgumentException("Fruta já cadastrada");
         }
-        frutaRepository.save(fruta);
+        frutaRepository.save(builder);
     }
 
     public ResponseEntity<Fruta> updateFruta(Long id, FrutaRequestDTO dto){

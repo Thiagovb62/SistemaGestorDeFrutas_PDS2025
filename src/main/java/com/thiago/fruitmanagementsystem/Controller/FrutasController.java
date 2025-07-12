@@ -178,7 +178,7 @@ public class FrutasController {
                     @ApiResponse(responseCode = "404", description = "Fruta não encontrada")
 
             })
-    @Secured("ADMIN")
+    @Secured("VENDEDOR")
     public ResponseEntity saveFruit(@Valid @RequestBody  @Parameter(name = "dto", description = "DTO para criação de frutas")  FrutaRequestDTO dto){
         frutaService.saveFruit(dto);
         return ResponseEntity.ok().build();
