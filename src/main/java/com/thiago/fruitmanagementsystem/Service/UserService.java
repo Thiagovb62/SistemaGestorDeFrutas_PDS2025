@@ -64,7 +64,7 @@ public class UserService {
         var newUser = new User(dto.email(), password);
         if (dto.email().equalsIgnoreCase("thiagovbAdm@gmail.com"))
          newUser.setRole(RoleEnum.ADMIN);
-        else if(dto.email().equalsIgnoreCase("thiagovbfazendas@gmail.com"))
+        else
          newUser.setRole(RoleEnum.VENDEDOR);
 
 

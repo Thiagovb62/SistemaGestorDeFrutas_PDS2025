@@ -1,5 +1,6 @@
 package com.thiago.fruitmanagementsystem.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import java.util.List;
 @Table(name = "barraca")
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Barraca {
 
     @Id
@@ -22,13 +24,13 @@ public class Barraca {
     private String nome;
 
 
-    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(
             name = "barraca_frutas",
             joinColumns = @JoinColumn(name = "barraca_id"),
             inverseJoinColumns = @JoinColumn(name = "fruta_id")
     )
-    private BarracaFrutas barracaFrutas;
+    private List<Fruta> frutas;
 
     @Column
     private Boolean isAtiva;
@@ -37,12 +39,12 @@ public class Barraca {
     @JoinColumn(name = "endereco_id", nullable = false)
     private Endereco endereco;
 
-    public BarracaFrutas getBarracaFrutas() {
-        return barracaFrutas;
+    public List<Fruta> getFrutas() {
+        return frutas;
     }
 
-    public void setBarracaFrutas(BarracaFrutas barracaFrutas) {
-        this.barracaFrutas = barracaFrutas;
+    public void setFrutas(List<Fruta> frutas) {
+        this.frutas = frutas;
     }
 
     public Endereco getEndereco() {

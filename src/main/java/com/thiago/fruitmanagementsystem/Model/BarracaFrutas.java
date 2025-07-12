@@ -18,4 +18,28 @@ public class BarracaFrutas {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "barraca_id")
     private Barraca barraca;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<Fruta> getFruta() {
+        return fruta;
+    }
+
+    public void setFruta(List<Fruta> fruta) {
+        this.fruta = fruta;
+    }
+
+    public Barraca getBarraca() {
+        return barraca;
+    }
+
+    public void setBarraca(Barraca barraca) {
+        this.barraca = barraca;
+    }
 }

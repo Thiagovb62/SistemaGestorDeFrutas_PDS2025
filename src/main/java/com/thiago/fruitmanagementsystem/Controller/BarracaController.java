@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/barracas")
 @RequiredArgsConstructor
@@ -35,8 +37,24 @@ public class BarracaController {
             })
     @Secured({"VENDEDOR"})
     public ResponseEntity<Barraca> criarBarraca(@RequestBody Barraca barraca,@PathVariable Long userId) {
-        Barraca novaBarraca = barracaService.criarBarraca(barraca, userId);
+        Barraca novaBarraca = barracaService.criarBarracaParaUsuario(barraca, userId);
         return ResponseEntity.ok(novaBarraca);
+    }
+
+    @PostMapping("/adicionarFrutas/{userId}")
+    @Operation(summary = "Adiciona frutas à barraca", description = "Adiciona frutas à barraca com o ID fornecido",
+            tags = {"Barraca"},
+            operationId = "adicionarFrutasNaBarraca",
+            responses = {
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Frutas adicionadas com sucesso"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Erro na requisição"),
+                    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Usuário não autenticado")
+            })
+    @Secured({"VENDEDOR"})
+    public ResponseEntity<String> adicionarFrutasNaBarraca(
+            @Parameter(description = "ID do usuario") @PathVariable Long userId,
+            @Parameter(description = "IDs das frutas a serem adicionadas") @RequestBody List<Long> frutaIds) {
+        return ResponseEntity.ok(barracaService.adicionarFrutasNaBarraca(userId, frutaIds));
     }
 
 
