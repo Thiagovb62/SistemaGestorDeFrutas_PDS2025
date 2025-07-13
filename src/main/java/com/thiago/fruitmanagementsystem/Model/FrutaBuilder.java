@@ -41,12 +41,5 @@ public class FrutaBuilder {
     public Fruta build() {
         return new Fruta(nome,ClassificacaoEnum.fromValor(classificacao), fresca, qtdDisponivel, valorVenda);
     }
-    public FrutaBuilder fromFruta(Fruta fruta) {
-        this.nome = fruta.getNome();
-        this.classificacao = fruta.getClassificacao().getValor();
-        this.fresca = fruta.getFresca();
-        this.qtdDisponivel = fruta.getQtdDisponivel();
-        this.valorVenda = fruta.getValorVenda();
-        return this;
-    }
+
 }

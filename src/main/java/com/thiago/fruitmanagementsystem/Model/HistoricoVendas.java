@@ -27,6 +27,11 @@ public class HistoricoVendas {
     public HistoricoVendas() {
     }
 
+    public HistoricoVendas(List<Venda> frutasVendidas) {
+        this.frutasVendidas = frutasVendidas;
+        this.id = UUID.randomUUID();
+    }
+
 
     public UUID getId() {
         return id;

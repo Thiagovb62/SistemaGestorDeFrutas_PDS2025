@@ -1,8 +1,8 @@
 package com.thiago.fruitmanagementsystem.Service;
 
 import com.thiago.fruitmanagementsystem.Model.*;
-import com.thiago.fruitmanagementsystem.Repository.FrutaRepository;
-import com.thiago.fruitmanagementsystem.Repository.HistoricoVendaRepository;
+import com.thiago.fruitmanagementsystem.Repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,28 +13,71 @@ import java.util.stream.Collectors;
 public class HistoricoVendaService {
 
     private final HistoricoVendaRepository historicoVendaRepository;
-    private final FrutaRepository frutaRepository;
+    private final VendaRepository vendaRepository;
+    private final UserRepository userRepository;
+    private final BarracaRepository barracaRepository;
 
-    public HistoricoVendaService(HistoricoVendaRepository historicoVendaRepository, com.thiago.fruitmanagementsystem.Repository.FrutaRepository frutaRepository) {
+    public HistoricoVendaService(HistoricoVendaRepository historicoVendaRepository, VendaRepository vendaRepository, UserRepository userRepository, BarracaRepository barracaRepository) {
         this.historicoVendaRepository = historicoVendaRepository;
-        this.frutaRepository = frutaRepository;
+        this.vendaRepository = vendaRepository;
+        this.userRepository = userRepository;
+        this.barracaRepository = barracaRepository;
     }
 
-    public List<HistoricoResponseDTO> findAllHistoricos() {
-        return null;
-    }
 
-
-//    protected HistoricoVendas createHistoricoVendas(VendaRequestDTO dto) {
-//        HistoricoVendas historico = new HistoricoVendas();
-//        historico.setDataVenda(LocalDateTime.now());
-//        for (FrutasVendasDTO dto2 : dto.frutasVendasDTO()) {
-//            historico.setQtdEscolhida(dto2.qtdEscolhida());
-//        }
-//        return historico;
-//    }
-
-    protected void processFruitsSales(VendaRequestDTO dto) {
+    @Transactional
+    public HistoricoResponseDTO findAllHistoricos(long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Barraca barraca = barracaRepository.findById(user.getBarraca().getId())
+                .orElseThrow(() -> new RuntimeException("Barraca não encontrada para o usuário"));
+        List<Venda> historicos = vendaRepository.findAll();
+        if (historicos.isEmpty()) {
+            throw new RuntimeException("Nenhum histórico de vendas encontrado");
+        }
+        if (barraca.getHistoricoVendas() == null) {
+            HistoricoVendas historicoVendas = new HistoricoVendas();
+            historicoVendas.setFrutasVendidas(historicos);
+            barraca.setHistoricoVendas(historicoVendas);
+            barracaRepository.save(barraca);
+            historicoVendaRepository.save(historicoVendas);
+            return new HistoricoResponseDTO(
+                    historicoVendas.getId(),
+                    new BarracaResponseDTO(barraca.getNome(), user.getUsername()),
+                    historicos.stream()
+                            .map(historico -> new FrutaVendaResponseDTO(
+                                    historico.getQtdEscolhida(),
+                                    historico.getDataVenda(),
+                                    historico.getValorTotal(),
+                                    new FrutaResponseDTO(
+                                            historico.getFruta().getNome(),
+                                            historico.getFruta().getClassificacao(),
+                                            historico.getFruta().getFresca(),
+                                            historico.getFruta().getValorVenda()
+                                    )
+                            )).collect(Collectors.toList())
+            );
+        }else{
+            var historicoVendas = barraca.getHistoricoVendas();
+            historicoVendas.setFrutasVendidas(historicos);
+            historicoVendaRepository.save(historicoVendas);
+            return new HistoricoResponseDTO(
+                    historicoVendas.getId(),
+                    new BarracaResponseDTO(barraca.getNome(), user.getUsername()),
+                    historicos.stream()
+                            .map(historico -> new FrutaVendaResponseDTO(
+                                    historico.getQtdEscolhida(),
+                                    historico.getDataVenda(),
+                                    historico.getValorTotal(),
+                                    new FrutaResponseDTO(
+                                            historico.getFruta().getNome(),
+                                            historico.getFruta().getClassificacao(),
+                                            historico.getFruta().getFresca(),
+                                            historico.getFruta().getValorVenda()
+                                    )
+                            )).collect(Collectors.toList())
+            );
+        }
 
     }
 

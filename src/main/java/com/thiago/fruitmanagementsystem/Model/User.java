@@ -25,6 +25,7 @@ public class User implements UserDetails {
     @ManyToOne(cascade = CascadeType.ALL)
     private Barraca barraca;
 
+
     @Enumerated(EnumType.STRING)
     private RoleEnum role;
 

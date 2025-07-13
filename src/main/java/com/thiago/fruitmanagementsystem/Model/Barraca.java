@@ -31,12 +31,25 @@ public class Barraca {
     )
     private List<Fruta> frutas;
 
+    @OneToOne
+    @JoinColumn(name = "historico_vendas_id")
+    private  HistoricoVendas historicoVendas;
+
+
     @Column
     private Boolean isAtiva;
 
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "endereco_id", nullable = false)
     private Endereco endereco;
+
+    public HistoricoVendas getHistoricoVendas() {
+        return historicoVendas;
+    }
+
+    public void setHistoricoVendas(HistoricoVendas historicoVendas) {
+        this.historicoVendas = historicoVendas;
+    }
 
     public List<Fruta> getFrutas() {
         return frutas;

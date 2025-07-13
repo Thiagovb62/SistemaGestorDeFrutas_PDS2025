@@ -32,7 +32,7 @@ public class PdfUtils {
             Font boldFont = new Font(Font.FontFamily.HELVETICA, 12, Font.BOLD);
             PdfPCell cell = new PdfPCell(new Phrase("ID", boldFont));
             table.addCell(cell);
-            cell = new PdfPCell(new Phrase("Valor Total", boldFont));
+            cell = new PdfPCell(new Phrase("Nome Barraca", boldFont));
             table.addCell(cell);
             cell = new PdfPCell(new Phrase("Frutas Vendidas", boldFont));
             table.addCell(cell);
@@ -40,18 +40,39 @@ public class PdfUtils {
             // Add data rows
             for (HistoricoResponseDTO historico : historicos) {
                 table.addCell(historico.id().toString());
-                table.addCell(historico.valorTotal().toString());
+                table.addCell(historico.barraca().nomeBarraca());
                 StringBuilder frutasVendidas = new StringBuilder();
                 for (FrutaVendaResponseDTO frutaVenda : historico.frutasVendidas()) {
-                    frutasVendidas.append(frutaVenda.frutaVendida().getNome())
+                    frutasVendidas.append(frutaVenda.frutaVendida().nome())
+                            .append(" - ")
+                            .append(frutaVenda.frutaVendida().classificacao().getDescricao())
                             .append(" - ")
                             .append(frutaVenda.qtdEscolhida())
                             .append(" - ")
                             .append(frutaVenda.dataVenda().toString())
+                            .append(" - ")
+                            .append(String.format("valorVenda: %.2f", frutaVenda.contatotal()))
                             .append("\n");
+
                 }
                 table.addCell(frutasVendidas.toString());
             }
+
+       // Adiciona uma célula vazia para ocupar as colunas anteriores
+                PdfPCell emptyCell = new PdfPCell(new Phrase(""));
+                emptyCell.setColspan(2);
+                emptyCell.setBorder(Rectangle.NO_BORDER);
+                table.addCell(emptyCell);
+
+                // Adiciona o total indexado à última coluna
+                PdfPCell totalCell = new PdfPCell(new Phrase(
+                    String.format("Total: %.2f", historicos.stream()
+                        .flatMap(h -> h.frutasVendidas().stream())
+                        .mapToDouble(FrutaVendaResponseDTO::contatotal)
+                        .sum())
+                ));
+                totalCell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                table.addCell(totalCell);
 
             document.add(table);
             document.close(); // Ensure the document is closed

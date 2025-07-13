@@ -19,6 +19,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,8 +39,8 @@ public class HistoricoVendaController {
         this.exportContext = exportContext;
     }
 
-    @GetMapping(value = "/all",produces = "application/json")
-    @Operation(summary = "Busca todos os históricos de vendas", description = "Busca todos os históricos de vendas",
+    @GetMapping(value = "/all/{userId}",produces = "application/json")
+    @Operation(summary = "Busca todos os históricos de vendas do vendedor", description = "Busca todos os históricos de vendas de uma barraca",
             tags = {"HistoricoVenda"},
             operationId = "all",
             responses = {
@@ -50,11 +51,11 @@ public class HistoricoVendaController {
 
             })
     @Secured({"VENDEDOR", "ADMIN"})
-    public ResponseEntity<List<HistoricoResponseDTO>> findAllHistoricos() {
-        return  ResponseEntity.ok(historicoVendaService.findAllHistoricos());
+    public ResponseEntity<HistoricoResponseDTO> findAllHistoricos(@PathVariable Long userId) {
+        return  ResponseEntity.ok(historicoVendaService.findAllHistoricos(userId));
     }
 
-    @GetMapping(value = "/export/{format}", produces = MediaType.APPLICATION_PDF_VALUE)
+    @GetMapping(value = "/export/{userId}/{format}", produces = MediaType.APPLICATION_PDF_VALUE)
     @Operation(summary = "Gera um PDF com todos os históricos de vendas", description = "Gera um PDF com todos os históricos de vendas",
             tags = {"HistoricoVenda"},
             operationId = "allPdf",
@@ -65,9 +66,9 @@ public class HistoricoVendaController {
             })
     @Secured({"VENDEDOR", "ADMIN"})
     public ResponseEntity<byte[]> export(
-            @PathVariable String format) throws Exception {
-        List<HistoricoResponseDTO> dados = historicoVendaService.findAllHistoricos();
-        byte[] output = exportContext.execute(format, dados);
+            @PathVariable String format,@Parameter(ref = "ID do vendedor") @PathVariable Long userId ) throws Exception {
+        HistoricoResponseDTO dados = historicoVendaService.findAllHistoricos(userId);
+        byte[] output = exportContext.execute(format, Collections.singletonList(dados));
         MediaType mediaType =
                 format.equals("pdf") ? MediaType.APPLICATION_PDF :
                         format.equals("csv") ? MediaType.valueOf("text/csv") :
@@ -78,22 +79,5 @@ public class HistoricoVendaController {
                         "attachment; filename=historico." + format)
                 .contentType(mediaType)
                 .body(output);
-    }
-
-    @DeleteMapping (value = "/delete/{id}")
-    @Operation(summary = "Deleta um histórico de vendas", description = "Deleta um histórico de vendas",
-            tags = {"HistoricoVenda"},
-            operationId = "delete",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Histórico de vendas deletado com sucesso"),
-                    @ApiResponse(responseCode = "400", description = "Erro na requisição"),
-                    @ApiResponse(responseCode = "401", description = "Usuário não autenticado"),
-                    @ApiResponse(responseCode = "404", description = "Histórico de vendas não encontrado")
-            })
-    @Secured("ADMIN")
-    public ResponseEntity<Void> deleteHistorico(@Parameter @PathVariable UUID id) {
-        var historico = historicoVendaRepository.findById(id);
-        historicoVendaRepository.delete(historico);
-        return ResponseEntity.ok().build();
     }
 }

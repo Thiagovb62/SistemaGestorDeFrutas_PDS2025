@@ -5,4 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface VendaRepository extends JpaRepository<Venda, Long> {
 
+
+
+    public Venda findAllByBarraca_Id(Long barracaId);
+
+
 }
