@@ -1,5 +1,6 @@
 package com.thiago.fruitmanagementsystem.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -14,26 +15,18 @@ public class HistoricoVendas {
     @Id
     private UUID id;
 
-    private LocalDateTime dataVenda;
-
-    private Double valorTotal;
-
-
-    private int qtdEscolhida;
-
     @OneToMany(mappedBy = "historicoVendas", cascade = CascadeType.PERSIST)
     private List<Venda> frutasVendidas;
 
-    public HistoricoVendas(UUID id, LocalDateTime dataVenda, Double valorTotal, List<Venda> frutasVendidas, int qtdEscolhida) {
+    public HistoricoVendas(UUID id, List<Venda> frutasVendidas) {
         this.id = id;
-        this.dataVenda = dataVenda;
-        this.valorTotal = valorTotal;
         this.frutasVendidas = frutasVendidas;
-        this.qtdEscolhida = qtdEscolhida;
     }
+
 
     public HistoricoVendas() {
     }
+
 
     public UUID getId() {
         return id;
@@ -41,30 +34,6 @@ public class HistoricoVendas {
 
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public int getQtdEscolhida() {
-        return qtdEscolhida;
-    }
-
-    public void setQtdEscolhida(int qtdEscolhida) {
-        this.qtdEscolhida = qtdEscolhida;
-    }
-
-    public LocalDateTime getDataVenda() {
-        return dataVenda;
-    }
-
-    public void setDataVenda(LocalDateTime dataVenda) {
-        this.dataVenda = dataVenda;
-    }
-
-    public Double getValorTotal() {
-        return valorTotal;
-    }
-
-    public void setValorTotal(Double valorTotal) {
-        this.valorTotal = valorTotal;
     }
 
     public List<Venda> getFrutasVendidas() {

@@ -10,8 +10,8 @@ import java.util.UUID;
 
 public interface HistoricoVendaRepository extends JpaRepository<HistoricoVendas, Long> {
 
-    @Query("select distinct hf from HistoricoVendas hv join Venda hf on hv.id = hf.historicoVendas.id join Fruta f on hf.fruta.id = f.id")
-    List<Venda> findAllHstoricos();
+//    @Query("select distinct hf from HistoricoVendas hv join Venda hf on hv.id = hf.historicoVendas.id join Fruta f on hf.fruta.id = f.id")
+//    List<Venda> findAllHstoricos();
 
 
     HistoricoVendas findById(UUID id);

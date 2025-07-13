@@ -7,12 +7,10 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,7 +26,7 @@ public class VendaController {
         this.vendasService = vendasService;
     }
 
-    @PostMapping("/add")
+    @PostMapping("/add/{userId}")
     @Transactional
     @Operation(summary = "Adiciona uma nova venda", description = "Adiciona uma nova venda",
             tags = {"Venda"},
@@ -41,9 +39,10 @@ public class VendaController {
 
             })
     @Secured("VENDEDOR")
-    public void executeSale(@RequestBody @Parameter(name = "dto", description = "DTO para requisição de vendas") VendaRequestDTO dtos) {
-        vendasService.executeSalesWithDiscoutOrNot(dtos);
-
+    public ResponseEntity<String> executeSale(@RequestBody @Parameter(name = "dto", description = "DTO para requisição de vendas") VendaRequestDTO dto,
+                                             @Parameter(description = "ID do usuário autenticado") @PathVariable Long userId) {
+        String response = vendasService.executarVendaComDesControOuSem(dto, userId);
+        return ResponseEntity.ok(response);
     }
 
 }

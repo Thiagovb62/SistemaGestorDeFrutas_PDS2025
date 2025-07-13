@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 @Schema(name = "FrutasVendasDTO", description = "DTO para vendas de frutas")
 public record FrutasVendasDTO(
         @NotNull(message = "O ID da fruta é obrigatório")
-        Integer frutaID,
+        Long frutaID,
 
         @Min(value = 0)
         float discount,

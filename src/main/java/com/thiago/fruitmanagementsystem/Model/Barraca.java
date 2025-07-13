@@ -23,7 +23,6 @@ public class Barraca {
     @Column(length = 100, nullable = false)
     private String nome;
 
-
     @OneToMany(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinTable(
             name = "barraca_frutas",
