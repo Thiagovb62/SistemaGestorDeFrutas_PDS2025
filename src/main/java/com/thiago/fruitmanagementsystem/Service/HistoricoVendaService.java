@@ -81,4 +81,22 @@ public class HistoricoVendaService {
 
     }
 
+    @Transactional
+    public String deleteHistorico(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+        Barraca barraca = barracaRepository.findById(user.getBarraca().getId())
+                .orElseThrow(() -> new RuntimeException("Barraca não encontrada para o usuário"));
+        HistoricoVendas historicoVendas = Optional.ofNullable(barraca.getHistoricoVendas())
+                .orElseThrow(() -> new RuntimeException("Histórico de vendas não encontrado para a barraca"));
+        List<Venda> vendas = historicoVendas.getFrutasVendidas();
+
+        barraca.setHistoricoVendas(null);
+        barracaRepository.save(barraca);
+
+        historicoVendaRepository.delete(historicoVendas);
+        vendaRepository.deleteAllVendasByBarraca_Id(barraca.getId());
+        return "Histórico de vendas deletado com sucesso";
+    }
+
 }

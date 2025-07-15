@@ -80,4 +80,18 @@ public class HistoricoVendaController {
                 .contentType(mediaType)
                 .body(output);
     }
+
+    @DeleteMapping(value = "/delete/{userId}")
+    @Operation(summary = "Deleta o histórico de vendas do dia", description = "Deleta um histórico de vendas pelo ID",
+            tags = {"HistoricoVenda"},
+            operationId = "delete",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Histórico de vendas deletado com sucesso"),
+                    @ApiResponse(responseCode = "400", description = "Erro na requisição"),
+                    @ApiResponse(responseCode = "404", description = "Histórico de vendas não encontrado")
+            })
+    @Secured({"VENDEDOR", "ADMIN"})
+    public ResponseEntity<String> deleteHistorico(@PathVariable Long userId) {
+        return ResponseEntity.ok(historicoVendaService.deleteHistorico(userId));
+    }
 }

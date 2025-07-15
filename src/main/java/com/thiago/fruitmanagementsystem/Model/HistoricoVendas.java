@@ -18,18 +18,8 @@ public class HistoricoVendas {
     @OneToMany(mappedBy = "historicoVendas", cascade = CascadeType.PERSIST)
     private List<Venda> frutasVendidas;
 
-    public HistoricoVendas(UUID id, List<Venda> frutasVendidas) {
-        this.id = id;
-        this.frutasVendidas = frutasVendidas;
-    }
-
 
     public HistoricoVendas() {
-    }
-
-    public HistoricoVendas(List<Venda> frutasVendidas) {
-        this.frutasVendidas = frutasVendidas;
-        this.id = UUID.randomUUID();
     }
 
 
