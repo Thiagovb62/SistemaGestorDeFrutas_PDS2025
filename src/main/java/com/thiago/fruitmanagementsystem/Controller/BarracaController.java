@@ -1,6 +1,7 @@
 package com.thiago.fruitmanagementsystem.Controller;
 
 import com.thiago.fruitmanagementsystem.Model.Barraca;
+import com.thiago.fruitmanagementsystem.Service.BarracaFacade;
 import com.thiago.fruitmanagementsystem.Service.BarracaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -11,10 +12,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -26,6 +24,9 @@ public class BarracaController {
 
     private final BarracaService barracaService;
 
+    private final BarracaFacade barracaFacade;
+
+
     @PostMapping("/criar/{userId}")
     @Operation(summary = "Cria uma nova barraca", description = "Cria uma nova barraca com as informações fornecidas",
             tags = {"Barraca"},
@@ -36,8 +37,8 @@ public class BarracaController {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Usuário não autenticado")
             })
     @Secured({"VENDEDOR"})
-    public ResponseEntity<Barraca> criarBarraca(@RequestBody Barraca barraca,@PathVariable Long userId) {
-        Barraca novaBarraca = barracaService.criarBarracaParaUsuario(barraca, userId);
+    public ResponseEntity<String> criarBarraca(@RequestBody Barraca barraca,@PathVariable Long userId) {
+        var novaBarraca = barracaFacade.criarBarracaParaUsuario(barraca, userId);
         return ResponseEntity.ok(novaBarraca);
     }
 
@@ -54,10 +55,8 @@ public class BarracaController {
     public ResponseEntity<String> adicionarFrutasNaBarraca(
             @Parameter(description = "ID do usuario") @PathVariable Long userId,
             @Parameter(description = "IDs das frutas a serem adicionadas") @RequestBody List<Long> frutaIds) {
-        return ResponseEntity.ok(barracaService.adicionarFrutasNaBarraca(userId, frutaIds));
+        return ResponseEntity.ok(barracaFacade.adicionarFrutasNaBarraca(userId, frutaIds));
     }
-
-
 
 
 }
