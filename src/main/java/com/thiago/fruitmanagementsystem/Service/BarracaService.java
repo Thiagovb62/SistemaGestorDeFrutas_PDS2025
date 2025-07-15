@@ -21,26 +21,22 @@ public class BarracaService{
     private final FrutaRepository frutaRepository;
     private final UserRepository userRepository;
 
-    @Transactional
-    public Barraca criarBarracaParaUsuario(Barraca barraca, Long userId) {
-        Barraca barracaCreated = barracaRepository.save(barraca);
-        Endereco endereco = barracaCreated.getEndereco();
-        enderecoRepository.save(endereco);
-        Optional<User> userExists = userRepository.findById(userId);
+
+    void ValidarIfUserHasAbarraca(Barraca barraca , Long userId) {
+        var userExists = userRepository.findById(userId);
         if (userExists.isPresent() && userExists.get().getBarraca() != null) {
             throw new RuntimeException("Usuário já possui uma barraca associada");
         }
         if (userExists.isPresent()) {
             User user = userExists.get();
-            user.setBarraca(barracaCreated);
+            user.setBarraca(barraca);
             userRepository.save(user);
         } else {
             throw new RuntimeException("Usuário não encontrado");
         }
-        return barraca;
     }
 
-    public String adicionarFrutasNaBarraca(Long userId, List<Long> frutaIds) {
+     void validarIfBarracaExists(Long userId, List<Long> frutaIds) {
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -48,14 +44,8 @@ public class BarracaService{
             if (barraca == null) {
                 throw new RuntimeException("Usuário não possui uma barraca associada");
             }
-            List<Fruta> frutas = frutaRepository.findAllById(frutaIds);
-            frutas.forEach(fruta -> {
-                fruta.setBarraca(barraca);
-                frutaRepository.save(fruta);
-            });
-            barraca.getFrutas().addAll(frutas);
-            barracaRepository.save(barraca);
+        }else {
+            throw new RuntimeException("Usuário não encontrado");
         }
-        return "Frutas adicionadas com sucesso à barraca do usuário com ID: " + userId;
     }
 }
