@@ -18,9 +18,26 @@ public class BarracaService{
 
     private final BarracaRepository barracaRepository;
     private final EnderecoRepository enderecoRepository;
+    private final EnderecoService enderecoService;
     private final FrutaRepository frutaRepository;
     private final UserRepository userRepository;
 
+    void adiconarEnderecoBarraca (Barraca barraca) {
+        var endereco = enderecoService.adiconarEnderecoNaTabela(barraca);
+        barraca.setEndereco(endereco);
+    }
+
+    void salvandoFrutasExistentesNaBarraca(Long userId, List<Long> frutaIds) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        var barraca = userOptional.get ( ).getBarraca ( );
+        List< Fruta > frutas = frutaRepository.findAllById(frutaIds);
+        frutas.forEach(fruta -> {
+            fruta.setBarraca(barraca);
+            frutaRepository.save(fruta);
+        });
+        barraca.getFrutas().addAll(frutas);
+        barracaRepository.save(barraca);
+    }
 
     void ValidarIfUserHasAbarraca(Barraca barraca , Long userId) {
         var userExists = userRepository.findById(userId);

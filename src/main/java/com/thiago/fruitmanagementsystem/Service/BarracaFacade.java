@@ -20,29 +20,18 @@ public class BarracaFacade {
 
     private final BarracaService barracaService;
     private final BarracaRepository barracaRepository;
-    private final EnderecoRepository enderecoRepository;
-    private final FrutaRepository frutaRepository;
-    private final UserRepository userRepository;
 
     public String criarBarracaParaUsuario(Barraca barraca, Long userId) {
-        Barraca barracaCreated = barracaRepository.save(barraca);
-        Endereco endereco = barracaCreated.getEndereco();
-        enderecoRepository.save(endereco);
-        barracaService.ValidarIfUserHasAbarraca(barracaCreated, userId);
+        barracaService.adiconarEnderecoBarraca(barraca);
+        barracaService.ValidarIfUserHasAbarraca(barraca, userId);
+        barracaRepository.save(barraca);
         return "Barraca criada com sucesso para o usuário.";
     }
 
     public String adicionarFrutasNaBarraca(Long userId, List<Long> frutaIds) {
         barracaService.validarIfBarracaExists (userId, frutaIds);
-        Optional<User> userOptional = userRepository.findById(userId);
-        var barraca = userOptional.get ( ).getBarraca ( );
-        List< Fruta > frutas = frutaRepository.findAllById(frutaIds);
-        frutas.forEach(fruta -> {
-            fruta.setBarraca(barraca);
-            frutaRepository.save(fruta);
-        });
-        barraca.getFrutas().addAll(frutas);
-        barracaRepository.save(barraca);
+        barracaService.salvandoFrutasExistentesNaBarraca(userId, frutaIds);
         return "Frutas adicionadas com sucesso à barraca do usuário.";
     }
+
 }
