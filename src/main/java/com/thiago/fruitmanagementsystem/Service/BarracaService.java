@@ -65,4 +65,19 @@ public class BarracaService{
             throw new RuntimeException("Usuário não encontrado");
         }
     }
+
+    public Barraca buscarBarracaPorUsuario(User user) {
+        return barracaRepository.findById(user.getBarraca().getId())
+                .orElseThrow(() -> new RuntimeException("Barraca não encontrada para o usuário"));
+    }
+
+    public void excluirHistoricoAtualDaBarraca(Barraca barraca) {
+        barraca.setHistoricoVendas(null);
+        barracaRepository.save(barraca);
+    }
+
+    public void setarHistoricoNaBarraca(Barraca barraca, HistoricoVendas historicoVendas) {
+        barraca.setHistoricoVendas(historicoVendas);
+        barracaRepository.save(barraca);
+    }
 }

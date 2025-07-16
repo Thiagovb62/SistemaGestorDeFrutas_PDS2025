@@ -35,6 +35,11 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+    public User buscarUsuario(long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+    }
+
     public ResponseEntity<List<userResponseDto>> listAllUsers() {
         var users = userRepository.findAll();
         List < userResponseDto > usersList = List.of ( );

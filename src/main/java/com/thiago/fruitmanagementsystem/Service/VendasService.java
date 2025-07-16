@@ -67,4 +67,19 @@ public class VendasService  {
 
     }
 
+    public List<Venda> buscarVendas() {
+        List<Venda> historicos = vendaRepository.findAll();
+        if (historicos.isEmpty()) {
+            throw new RuntimeException("Nenhum histórico de vendas encontrado");
+        }
+        return historicos;
+    }
+
+    public void deleteAllVendas(Long userId) {
+
+        List<Venda> vendas =  this.buscarVendas();
+
+        vendaRepository.deleteAll(vendas);
+    }
+
 }

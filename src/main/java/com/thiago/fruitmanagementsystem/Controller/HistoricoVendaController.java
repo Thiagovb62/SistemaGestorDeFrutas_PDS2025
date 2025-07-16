@@ -4,6 +4,7 @@ import com.itextpdf.text.DocumentException;
 import com.thiago.fruitmanagementsystem.Model.HistoricoResponseDTO;
 import com.thiago.fruitmanagementsystem.PdfUtils.ExportContext;
 import com.thiago.fruitmanagementsystem.Repository.HistoricoVendaRepository;
+import com.thiago.fruitmanagementsystem.Service.HistoricoVendaFacadeImpl;
 import com.thiago.fruitmanagementsystem.Service.HistoricoVendaService;
 import com.thiago.fruitmanagementsystem.Utils.PdfUtils;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,13 +30,12 @@ import java.util.UUID;
 @Tag(name = "HistoricoVenda", description = "Rotas Para Histórico de Vendas")
 public class HistoricoVendaController {
 
-    private final HistoricoVendaService historicoVendaService;
-    private final HistoricoVendaRepository historicoVendaRepository;
+    private final HistoricoVendaFacadeImpl HistoricoVendaFacadeImpl;
     private final ExportContext exportContext;
 
-    public HistoricoVendaController(HistoricoVendaService historicoVendaService, HistoricoVendaRepository historicoVendaRepository, ExportContext exportContext) {
-        this.historicoVendaService = historicoVendaService;
-        this.historicoVendaRepository = historicoVendaRepository;
+    public HistoricoVendaController(HistoricoVendaFacadeImpl HistoricoVendaFacadeImpl, ExportContext exportContext) {
+        this.HistoricoVendaFacadeImpl = HistoricoVendaFacadeImpl;
+
         this.exportContext = exportContext;
     }
 
@@ -52,7 +52,7 @@ public class HistoricoVendaController {
             })
     @Secured({"VENDEDOR", "ADMIN"})
     public ResponseEntity<HistoricoResponseDTO> findAllHistoricos(@PathVariable Long userId) {
-        return  ResponseEntity.ok(historicoVendaService.findAllHistoricos(userId));
+        return  ResponseEntity.ok(HistoricoVendaFacadeImpl.obterHistoricoVendas(userId));
     }
 
     @GetMapping(value = "/export/{userId}/{format}", produces = MediaType.APPLICATION_PDF_VALUE)
@@ -67,7 +67,7 @@ public class HistoricoVendaController {
     @Secured({"VENDEDOR", "ADMIN"})
     public ResponseEntity<byte[]> export(
             @PathVariable String format,@Parameter(ref = "ID do vendedor") @PathVariable Long userId ) throws Exception {
-        HistoricoResponseDTO dados = historicoVendaService.findAllHistoricos(userId);
+        HistoricoResponseDTO dados = HistoricoVendaFacadeImpl.obterHistoricoVendas(userId);
         byte[] output = exportContext.execute(format, Collections.singletonList(dados));
         MediaType mediaType =
                 format.equals("pdf") ? MediaType.APPLICATION_PDF :
@@ -92,6 +92,6 @@ public class HistoricoVendaController {
             })
     @Secured({"VENDEDOR", "ADMIN"})
     public ResponseEntity<String> deleteHistorico(@PathVariable Long userId) {
-        return ResponseEntity.ok(historicoVendaService.deleteHistorico(userId));
+        return ResponseEntity.ok(HistoricoVendaFacadeImpl.limparHistoricoVendas(userId));
     }
 }
