@@ -1,20 +1,19 @@
 package com.thiago.fruitmanagementsystem.Controller;
 
-import com.thiago.fruitmanagementsystem.Model.Fruta;
-import com.thiago.fruitmanagementsystem.Model.FrutasFindBysDTO;
+import com.thiago.fruitmanagementsystem.Model.FrutaResumoDTO;
 import com.thiago.fruitmanagementsystem.Model.FrutaRequestDTO;
 import com.thiago.fruitmanagementsystem.Service.FrutaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/frutas")
@@ -28,7 +27,7 @@ public class FrutasController {
         this.frutaService = frutaService;
     }
 
-    @GetMapping(value = "/findByName",consumes = "application/json", produces = "application/json")
+    @GetMapping(value = "/findByName", produces = "application/json")
     @Operation(summary = "Busca frutas pelo nome", description = "Busca frutas pelo nome",
             tags = {"Frutas"},
             operationId = "findByName",
@@ -40,11 +39,9 @@ public class FrutasController {
                     @ApiResponse(responseCode = "404", description = "Fruta não encontrada")
 
             })
-    @Parameter(name = "dto", description = "DTO para busca de frutas pelo nome")
     @Secured("VENDEDOR")
-    public ResponseEntity findFruitByName(@RequestBody  FrutasFindBysDTO dto) {
-        var frutas = frutaService.findFruitByName(dto);
-        return ResponseEntity.ok(frutas);
+    public ResponseEntity<List<FrutaResumoDTO>> findFruitByName(@RequestParam String nome) {
+        return ResponseEntity.ok(frutaService.findFruitByName(nome));
     }
 
     @GetMapping(value = "/getAll", produces = "application/json")
@@ -60,11 +57,11 @@ public class FrutasController {
 
             })
     @Secured("VENDEDOR")
-    public ResponseEntity getAllFruits() {
+    public ResponseEntity<List<FrutaResumoDTO>>  getAllFruits() {
         return ResponseEntity.ok(frutaService.getAllFruits());
     }
 
-    @GetMapping(value = "/getByClassification",consumes = "application/json", produces = "application/json")
+    @GetMapping(value = "/getByClassification",produces = "application/json")
     @Operation(summary = "Busca frutas pela classificação", description = "Busca frutas pela classificação",
             tags = {"Frutas"},
             operationId = "getByClassification",
@@ -77,11 +74,11 @@ public class FrutasController {
 
             })
     @Secured("VENDEDOR")
-    public ResponseEntity getFruitsByClassification(@RequestBody  @Parameter(name = "dto", description = "DTO para busca de frutas pela classificação") FrutasFindBysDTO dto){
-        return ResponseEntity.ok(frutaService.getFruitsByClassification(dto));
+    public ResponseEntity<List<FrutaResumoDTO>> getFruitsByClassification(@RequestParam int classificacao) {
+        return ResponseEntity.ok(frutaService.getFruitsByClassification(classificacao));
     }
 
-    @GetMapping(value = "/getByFreshness",consumes = "application/json", produces = "application/json")
+    @GetMapping(value = "/getByFreshness",produces = "application/json")
 
     @Operation(summary = "Busca frutas pela frescura", description = "Busca frutas pela frescura",
             tags = {"Frutas"},
@@ -95,26 +92,10 @@ public class FrutasController {
 
             })
     @Secured("VENDEDOR")
-    public ResponseEntity getFruitsByFreshness(@RequestBody FrutasFindBysDTO dto){
-        return ResponseEntity.ok(frutaService.getFruitsByFreshness(dto));
+    public ResponseEntity<List<FrutaResumoDTO>> getFruitsByFreshness(@RequestParam Boolean fresca) {
+        return ResponseEntity.ok(frutaService.getFruitsByFreshness(fresca));
     }
 
-    @GetMapping(value = "/getByAvailableQuantity", produces = "application/json")
-    @Operation(summary = "Busca frutas pela quantidade disponível", description = "Busca frutas pela quantidade disponível",
-            tags = {"Frutas"},
-            operationId = "getByAvailableQuantity",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
-                    @ApiResponse(responseCode = "400", description = "Erro na requisição"),
-                    @ApiResponse(responseCode = "401", description = "Sem autorização"),
-                    @ApiResponse (responseCode = "403", description = "Acesso negado"),
-                    @ApiResponse(responseCode = "404", description = "Fruta não encontrada")
-
-            })
-    @Secured("VENDEDOR")
-    public ResponseEntity getFruitsByAvailableQuantity(){
-        return ResponseEntity.ok(frutaService.getFruitsByAvailableQuantity());
-    }
 
     @GetMapping(value = "/getBySaleValueAsc", produces = "application/json")
     @Operation(summary = "Busca frutas pelo valor de venda crescente", description = "Busca frutas pelo valor de venda crescente",
@@ -129,7 +110,7 @@ public class FrutasController {
 
             })
     @Secured("VENDEDOR")
-    public ResponseEntity getFruitsBySaleValueAsc(){
+    public ResponseEntity<List<FrutaResumoDTO>>  getFruitsBySaleValueAsc(){
         return ResponseEntity.ok(frutaService.getFruitsBySaleValueAsc());
     }
 
@@ -145,11 +126,11 @@ public class FrutasController {
 
             })
     @Secured("VENDEDOR")
-    public ResponseEntity getFruitsBySaleValueDesc(){
+    public ResponseEntity<List<FrutaResumoDTO>>  getFruitsBySaleValueDesc(){
         return ResponseEntity.ok(frutaService.getFruitsBySaleValueDesc());
     }
 
-    @GetMapping(value = "/getByParams",consumes = "application/json", produces = "application/json")
+    @GetMapping(value = "/getByParams", produces = "application/json")
     @Operation(summary = "Busca frutas por parâmetros", description = "Busca frutas por parâmetros",
             tags = {"Frutas"},
             operationId = "getByParams",
@@ -161,8 +142,10 @@ public class FrutasController {
 
             })
     @Secured("VENDEDOR")
-    public ResponseEntity getFruitsByParams(@RequestBody FrutasFindBysDTO dto){
-        return ResponseEntity.ok(frutaService.findAllByClassificacaoOrFrescaAndOrderByValorVendaIdAsc(dto));
+    public ResponseEntity<List<FrutaResumoDTO>>  getFruitsByParams(
+            @Valid @RequestParam(required = false) Integer classificacao,
+            @Valid @RequestParam(required = false) Boolean fresca){
+        return ResponseEntity.ok(frutaService.findAllByClassificacaoOrFrescaAndOrderByValorVendaIdAsc(classificacao, fresca));
     }
 
     @PostMapping(value = "/save",consumes = "application/json")
@@ -179,7 +162,7 @@ public class FrutasController {
 
             })
     @Secured("VENDEDOR")
-    public ResponseEntity saveFruit(@Valid @RequestBody  @Parameter(name = "dto", description = "DTO para criação de frutas")  FrutaRequestDTO dto){
+    public ResponseEntity saveFruit(@Valid @RequestParam  FrutaRequestDTO dto){
         frutaService.saveFruit(dto);
         return ResponseEntity.ok().build();
     }
@@ -198,25 +181,7 @@ public class FrutasController {
 
             })
     @Secured("ADMIN")
-    public ResponseEntity< Fruta > updateFruta(@PathVariable Long id, @RequestBody FrutaRequestDTO dto) {
+    public ResponseEntity< String > updateFruta(@PathVariable Long id, @RequestBody FrutaRequestDTO dto) {
         return frutaService.updateFruta (id, dto);
-    }
-
-    @DeleteMapping("/delete/{id}")
-    @Operation(summary = "Deleta fruta", description = "Deleta fruta",
-            tags = {"Frutas"},
-            operationId = "delete",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Fruta deletada com sucesso"),
-                    @ApiResponse(responseCode = "400", description = "Erro na requisição"),
-                    @ApiResponse(responseCode = "401", description = "Sem autorização"),
-                    @ApiResponse(responseCode = "404", description = "Fruta não encontrada")
-
-            })
-    @Secured("ADMIN")
-    @Transactional
-    public ResponseEntity deleteFruta(@PathVariable Long id) {
-        frutaService.deleteFruta(id);
-        return ResponseEntity.noContent ().build ();
     }
 }

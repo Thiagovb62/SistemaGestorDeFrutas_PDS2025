@@ -7,6 +7,6 @@ public record FrutaVendaResponseDTO(
         int qtdEscolhida,
         LocalDateTime dataVenda,
         double contatotal,
-        FrutaResponseDTO frutaVendida
+        FrutaHistoricoResponseDTO frutaVendida
 ) {
 }

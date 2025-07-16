@@ -5,7 +5,6 @@ import com.thiago.fruitmanagementsystem.Repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -49,7 +48,7 @@ public class HistoricoVendaService {
                                     historico.getQtdEscolhida(),
                                     historico.getDataVenda(),
                                     historico.getValorTotal(),
-                                    new FrutaResponseDTO(
+                                    new FrutaHistoricoResponseDTO(
                                             historico.getFruta().getNome(),
                                             historico.getFruta().getClassificacao(),
                                             historico.getFruta().getFresca(),
@@ -69,7 +68,7 @@ public class HistoricoVendaService {
                                     historico.getQtdEscolhida(),
                                     historico.getDataVenda(),
                                     historico.getValorTotal(),
-                                    new FrutaResponseDTO(
+                                    new FrutaHistoricoResponseDTO(
                                             historico.getFruta().getNome(),
                                             historico.getFruta().getClassificacao(),
                                             historico.getFruta().getFresca(),

@@ -2,7 +2,7 @@ package com.thiago.fruitmanagementsystem.Model;
 
 import com.thiago.fruitmanagementsystem.Enums.ClassificacaoEnum;
 
-public record FrutaResponseDTO(
+public record FrutaHistoricoResponseDTO(
         String nome,
         ClassificacaoEnum classificacao,
         Boolean fresca,
