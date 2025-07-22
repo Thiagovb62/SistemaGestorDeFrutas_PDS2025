@@ -76,7 +76,7 @@ public class UserService {
         userRepository.save(newUser);
     }
 
-    public ResponseEntity<userUpdateDto> updateUser(Long id , UserDTO dto) {
+    public String updateUser(Long id , UserDTO dto) {
         var user = userRepository.findByEmailEqualsIgnoreCase(dto.email());
         if (user == null) {
             throw new IllegalArgumentException("User not found");
@@ -87,7 +87,7 @@ public class UserService {
         }
 
         userRepository.save(user);
-        return ResponseEntity.ok(new userUpdateDto(user.getUsername(), user.getPassword()));
+        return "User updated successfully";
     }
 
     public void deleteUser(Long id) {

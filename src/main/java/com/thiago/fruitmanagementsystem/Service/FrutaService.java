@@ -69,7 +69,7 @@
             }
 
             // Os métodos de cadastro, atualização e exclusão permanecem iguais
-            public void saveFruit(FrutaRequestDTO dto){
+            public String saveFruit(FrutaRequestDTO dto){
                 Fruta builder = FrutaBuilder.builder()
                         .setNome(dto.nome())
                         .setClassificacao(dto.classificacao())
@@ -82,6 +82,7 @@
                     throw new IllegalArgumentException("Fruta já cadastrada");
                 }
                 frutaRepository.save(builder);
+                return "Fruta salva com sucesso!";
             }
 
             public ResponseEntity<String> updateFruta(Long id, FrutaRequestDTO dto){
@@ -96,6 +97,7 @@
                     if (dto.fresca () != null) fruta.get ().setFresca (dto.fresca ());
                     if (dto.qtdDisponivel () != null) fruta.get ().setQtdDisponivel (dto.qtdDisponivel ());
                     if (dto.valorVenda () != null) fruta.get ().setValorVenda (dto.valorVenda ());
+                    frutaRepository.save(fruta.get());
                 } else {
                     throw new EntityNotFoundException("Fruta não encontrada com o id " + id + "!");
                 }

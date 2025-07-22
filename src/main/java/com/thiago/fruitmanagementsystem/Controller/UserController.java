@@ -8,6 +8,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -70,9 +72,9 @@ public class UserController {
                     @ApiResponse(responseCode = "400", description = "Erro na requisição"),
                     @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
             })
-    public ResponseEntity atualizarUsuario(@PathVariable @Parameter(name = "id") Long id , @RequestBody @Parameter(name = "dto", description = "DTO para atualização de usuários") UserDTO dto) throws AuthenticationException {
-       ResponseEntity < UserService.userUpdateDto > user =  userService.updateUser(id, dto);
-        return ResponseEntity.ok(user);
+    public ResponseEntity<String> atualizarUsuario(@PathVariable @Parameter(name = "id") Long id , @RequestBody @Parameter(name = "dto", description = "DTO para atualização de usuários") UserDTO dto) throws AuthenticationException {
+
+        return ResponseEntity.ok(userService.updateUser(id, dto));
     }
 
     @DeleteMapping("delete/{id}")
@@ -84,7 +86,7 @@ public class UserController {
                     @ApiResponse(responseCode = "400", description = "Erro na requisição"),
                     @ApiResponse(responseCode = "404", description = "Usuário não encontrado")
             })
-    public ResponseEntity deletarUsuario(@PathVariable @Parameter(name = "id") Long id) throws AuthenticationException {
+    public ResponseEntity<String> deletarUsuario(@PathVariable @Parameter(name = "id") Long id) throws AuthenticationException {
         userService.deleteUser(id);
         return ResponseEntity.ok("Usuário deletado com sucesso");
     }

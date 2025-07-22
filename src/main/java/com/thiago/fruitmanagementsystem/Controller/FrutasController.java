@@ -56,7 +56,7 @@ public class FrutasController {
                     @ApiResponse(responseCode = "404", description = "Fruta não encontrada")
 
             })
-    @Secured("VENDEDOR")
+    @Secured({"VENDEDOR", "ADMIN"})
     public ResponseEntity<List<FrutaResumoDTO>>  getAllFruits() {
         return ResponseEntity.ok(frutaService.getAllFruits());
     }
@@ -79,7 +79,6 @@ public class FrutasController {
     }
 
     @GetMapping(value = "/getByFreshness",produces = "application/json")
-
     @Operation(summary = "Busca frutas pela frescura", description = "Busca frutas pela frescura",
             tags = {"Frutas"},
             operationId = "getByFreshness",
@@ -161,10 +160,9 @@ public class FrutasController {
                     @ApiResponse(responseCode = "404", description = "Fruta não encontrada")
 
             })
-    @Secured("VENDEDOR")
-    public ResponseEntity saveFruit(@Valid @RequestParam  FrutaRequestDTO dto){
-        frutaService.saveFruit(dto);
-        return ResponseEntity.ok().build();
+    @Secured("ADMIN")
+    public ResponseEntity<String> saveFruit(@Valid @RequestBody   FrutaRequestDTO dto){
+        return ResponseEntity.ok(frutaService.saveFruit(dto));
     }
 
 

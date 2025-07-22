@@ -51,7 +51,7 @@ public class BarracaController {
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "Erro na requisição"),
                     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "Usuário não autenticado")
             })
-    @Secured({"VENDEDOR"})
+    @Secured({"ADMIN"})
     public ResponseEntity<String> adicionarFrutasNaBarraca(
             @Parameter(description = "ID do usuario") @PathVariable Long userId,
             @Parameter(description = "IDs das frutas a serem adicionadas") @RequestBody List<Long> frutaIds) {
