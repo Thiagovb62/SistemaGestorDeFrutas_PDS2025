@@ -34,7 +34,6 @@ public class VendasService  {
             throw new RuntimeException("Usuário não possui uma barraca associada");
         }
         dto.frutasVendasDTO().forEach(frutas ->{
-            System.out.println(barraca.getFrutas());
             if (!barraca.getFrutas().stream().anyMatch(
                     fruta -> fruta.getBarraca().getId().equals(barraca.getId())))  {
                 throw new RuntimeException("Fruta com ID " + frutas.frutaID() + " não está disponível na barraca do usuário");
@@ -49,9 +48,9 @@ public class VendasService  {
             fruta.setQtdDisponivel(fruta.getQtdDisponivel() - frutas.qtdEscolhida());
             frutaRepository.save(fruta);
 
-            if (frutas.discount() > 0){
+            if (frutas.discount() > 0.0) {
                 double valorTotal = frutas.qtdEscolhida() * fruta.getValorVenda();
-                double valorComDesconto = valorTotal - (valorTotal * frutas.discount() / 100);
+                double valorComDesconto = valorTotal - (valorTotal * frutas.discount());
 
                 Venda venda = new Venda(valorComDesconto, frutas.qtdEscolhida(),fruta, LocalDateTime.now(), barraca);
                 vendaRepository.save(venda);

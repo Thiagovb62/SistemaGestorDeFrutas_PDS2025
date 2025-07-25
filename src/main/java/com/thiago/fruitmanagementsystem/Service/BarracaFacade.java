@@ -1,9 +1,6 @@
 package com.thiago.fruitmanagementsystem.Service;
 
-import com.thiago.fruitmanagementsystem.Model.Barraca;
-import com.thiago.fruitmanagementsystem.Model.Endereco;
-import com.thiago.fruitmanagementsystem.Model.Fruta;
-import com.thiago.fruitmanagementsystem.Model.User;
+import com.thiago.fruitmanagementsystem.Model.*;
 import com.thiago.fruitmanagementsystem.Repository.BarracaRepository;
 import com.thiago.fruitmanagementsystem.Repository.EnderecoRepository;
 import com.thiago.fruitmanagementsystem.Repository.FrutaRepository;
@@ -19,12 +16,10 @@ import java.util.Optional;
 public class BarracaFacade {
 
     private final BarracaService barracaService;
-    private final BarracaRepository barracaRepository;
 
     public String criarBarracaParaUsuario(Barraca barraca, Long userId) {
         barracaService.adiconarEnderecoBarraca(barraca);
         barracaService.ValidarIfUserHasAbarraca(barraca, userId);
-        barracaRepository.save(barraca);
         return "Barraca criada com sucesso para o usuário.";
     }
 
@@ -32,6 +27,14 @@ public class BarracaFacade {
         barracaService.validarIfBarracaExists (userId, frutaIds);
         barracaService.salvandoFrutasExistentesNaBarraca(userId, frutaIds);
         return "Frutas adicionadas com sucesso à barraca do usuário.";
+    }
+
+    public BarracaResponseDTO obterBarracaPorId(Long userId) {
+        return barracaService.ListarBarracasAtivas(userId);
+    }
+
+    public List<FrutaResumoDTO> ListarFrutasNaBarraca(Long userId) {
+        return barracaService.buscarFrutasNaBarracaPorUsuario(userId);
     }
 
 }

@@ -21,6 +21,7 @@ public class BarracaService{
     private final EnderecoService enderecoService;
     private final FrutaRepository frutaRepository;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     void adiconarEnderecoBarraca (Barraca barraca) {
         var endereco = enderecoService.adiconarEnderecoNaTabela(barraca);
@@ -51,6 +52,7 @@ public class BarracaService{
         } else {
             throw new RuntimeException("Usuário não encontrado");
         }
+        barracaRepository.save(barraca);
     }
 
      void validarIfBarracaExists(Long userId, List<Long> frutaIds) {
@@ -79,5 +81,33 @@ public class BarracaService{
     public void setarHistoricoNaBarraca(Barraca barraca, HistoricoVendas historicoVendas) {
         barraca.setHistoricoVendas(historicoVendas);
         barracaRepository.save(barraca);
+    }
+
+    public BarracaResponseDTO ListarBarracasAtivas(Long userId) {
+        var user = userService.buscarUsuario(userId);
+        Optional<Barraca> barracaAtiva = barracaRepository.findBarracaById(user.getBarraca().getId());
+        if (barracaAtiva.isEmpty()) {
+            throw new NullPointerException("Nenhuma barraca ativa encontrada");
+        }
+        return new BarracaResponseDTO(
+                barracaAtiva.get().getNome(),
+                user.getUsername());
+    }
+    public List<FrutaResumoDTO> buscarFrutasNaBarracaPorUsuario(Long userID) {
+        Barraca barraca = buscarBarracaPorUsuario(userService.buscarUsuario(userID));
+
+        if (barraca.getFrutas().isEmpty()) {
+            throw new NullPointerException("Nenhuma fruta encontrada na barraca do usuário");
+        }
+
+        return barraca.getFrutas().stream()
+                .map(fruta -> new FrutaResumoDTO(
+                        fruta.getId(),
+                        fruta.getNome(),
+                        fruta.getClassificacao(),
+                        fruta.getFresca(),
+                        fruta.getValorVenda(),
+                        fruta.getQtdDisponivel()))
+                .toList();
     }
 }
